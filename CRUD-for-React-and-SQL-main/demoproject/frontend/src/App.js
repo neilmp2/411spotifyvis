@@ -54,7 +54,6 @@ function App() {
   return (
     <div className="App">
       <h1> CRUD APPLICATIONS</h1>
-      <h4>{show1}</h4>
       <div className="form">
         <label> Song Name:</label>
         <input
@@ -67,7 +66,9 @@ function App() {
         <button onClick={insertSong}> Insert</button>
         <br />
 
-        <button onSubmit={revealOne}>SQL Query 1</button>
+        <button onSubmit={revealOne}>
+          Get All Albums and Songs For Artist
+        </button>
 
         {show1 ? (
           <></>
@@ -84,7 +85,12 @@ function App() {
         )}
 
         <br />
-        <button>SQL Query 2</button>
+        <button>Get All Playlists for User: Cloud</button>
+        <br />
+        <br />
+        <h4>Search Songs</h4>
+        <input></input>
+        <h2>All Songs</h2>
         {songList.map((val) => {
           return (
             <div className="card">
