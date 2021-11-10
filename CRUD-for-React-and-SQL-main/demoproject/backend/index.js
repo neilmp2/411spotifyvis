@@ -4,13 +4,12 @@ const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
 
-
 var db = mysql.createConnection({
-    host:'localhost',
-    user: 'root',
-    password:'mypassword',
-    database:'411demo',
-})
+  host: "localhost",
+  user: "root",
+  password: "neil",
+  database: "spovisdemo1",
+});
 
 // db.connect(function(err) {
 //     if (err) throw err;
@@ -33,44 +32,65 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get("/api/get", (require, response) => {
-    const sqlSelect = "SELECT * FROM movie_reviews";
-    db.query(sqlSelect, (err, result) => {
-        response.send(result);
-    });
+  const sqlSelect = "SELECT * FROM Song";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/api/query1", (require, response) => {
+  const sqlSelect =
+    "SELECT song_name, album_name FROM Song NATURAL JOIN Album WHERE album_id IN (SELECT album_id FROM Album NATURAL JOIN Artist WHERE artist_name LIKE '%Yu-Peng Chen') GROUP BY album_name, song_name;";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/api/query2", (require, response) => {
+  const sqlSelect = "SELECT * FROM Song";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/", (require, response) => {
+  response.send("Hello!");
 });
 
 app.post("/api/insert", (require, response) => {
-    const movieName = require.body.movieName;
-    const movieReview = require.body.movieReview;
-
-    const sqlInsert = "INSERT INTO `movie_reviews` (`movieName`, `movieReview`) VALUES (?,?)";
-    db.query(sqlInsert, [movieName, movieReview], (err, result) => {
-        console.log(error);
-    })
+  const songName = require.body.songName;
+  const sqlInsert =
+    "INSERT INTO `song` (`song_id`, `song_name`, `artist_id`, `album_id`, `song_tempo`, `song_valence`, `song_dance`) VALUES (?,?,?,?,?,?,?)";
+  db.query(
+    sqlInsert,
+    [Math.floor(Math.random() * 100) + 10000, songName, 1, 2, 0, 0, 0],
+    (err, result) => {
+      console.log(err);
+    }
+  );
 });
 
-app.delete("/api/delete/:movieName", (require, response) => {
-    const movieName = require.params.movieName;
-
-    const sqlDelete = "DELETE FROM `movie_reviews` WHERE `movieName`= ?";
-    db.query(sqlDelete, movieName, (err, result) => {
-        if (err) 
-        console.log(error);
-    })
+app.delete("/api/delete/:songName", (require, response) => {
+  const songName = require.params.songName;
+  console.log(songName);
+  const sqlDelete =
+    "delete from song where song_id in (SELECT sid FROM (SELECT song_id as sid FROM song WHERE song_name=?) as a)";
+  db.query(sqlDelete, songName, (err, result) => {
+    if (err) console.log(err);
+  });
 });
 
-app.put("/api/update/", (require, response) => {
-    const movieName = require.body.movieName;
-    const movieReview = require.body.movieReview;
+app.put("/api/update", (require, response) => {
+  const songName = require.body.songName;
+  const danceValue = require.body.newDanceVal;
 
-    const sqlUpdate = "UPDATE `movie_reviews` SET `movieReview` = ? WHERE `movieName`= ?";
-    db.query(sqlUpdate, [movieReview,movieName ], (err, result) => {
-        if (err) 
-        console.log(error);
-    })
+  const sqlUpdate =
+    "UPDATE song SET song_dance = ? where song_id in (SELECT sid FROM (SELECT song_id as sid FROM song WHERE song_name= ?) as a);";
+  db.query(sqlUpdate, [danceValue, songName], (err, result) => {
+    if (err) console.log(err);
+  });
 });
 
 app.listen(3002, () => {
-    console.log("running on port 3002");
-})
-
+  console.log("running on port 3002");
+});
