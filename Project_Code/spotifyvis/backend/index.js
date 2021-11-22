@@ -11,22 +11,6 @@ var db = mysql.createConnection({
   database: "spovisdemo1",
 });
 
-// db.connect(function(err) {
-//     if (err) throw err;
-//     var sql = "INSERT INTO `movie_reviews` (`id`,`movieName`, `movieReview`) VALUES (5,'inception', 'good movie');";
-//     db.query(sql, function (err, result) {
-//       if (err) throw err;
-//       console.log(result.affectedRows + " record(s) updated");
-//     });
-//   });
-
-// app.get('/', (require, response) => {
-//     const sqlInsert = "INSERT INTO `movie_reviews` (`movieName`, `movieReview`) VALUES ('Spider2', 'good movie');";
-//     db.query(sqlInsert, (err, result) => {
-//         response.send("Hello world!!!");
-//     })
-// })
-
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -43,6 +27,36 @@ app.get("/api/query1", (require, response) => {
     "SELECT song_name, album_name FROM Song NATURAL JOIN Album WHERE album_id IN (SELECT album_id FROM Album NATURAL JOIN Artist WHERE artist_name LIKE '%Yu-Peng Chen') GROUP BY album_name, song_name;";
   db.query(sqlSelect, (err, result) => {
     response.send(result);
+  });
+});
+
+app.get("/api/numPlaylist", (require, response) => {
+  const sqlSelect = "select count(playlist_id) from playlist;";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/api/getPlaylists", (require, response) => {
+  const sqlSelect = "select * from Playlist;";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/api/getSongs", (require, response) => {
+  const sqlSelect = "select * from song;";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/api/getArtist/:artist_id", (require, response) => {
+  const artist_id = require.params.artist_id;
+  const sqlSelect = "select artist_name from artist where artist_id= ?;";
+  db.query(sqlSelect, artist_id, (err, result) => {
+    response.send(result);
+    //console.log(result[0]["artist_name"]);
   });
 });
 
