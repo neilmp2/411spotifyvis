@@ -10,6 +10,7 @@ function App() {
   const [songName, setsongName] = useState("");
   const [query1, setquery1] = useState([]);
   const [query2, setquery2] = useState([]);
+  const [albumName, setalbumName] = useState("");
   const [show1, setshow1] = useState(1);
 
   useEffect(() => {
@@ -47,6 +48,11 @@ function App() {
     });
   }, []);
 
+  const deleteAlbum = () => {
+    Axios.get(`http://localhost:3002/api/trigger`);
+    Axios.get(`http://localhost:3002/api/transaction`);
+  };
+
   const revealOne = () => {
     setshow1(0);
   };
@@ -64,6 +70,16 @@ function App() {
           }}
         />
         <button onClick={insertSong}> Insert</button>
+        <br />
+        <label> Album Name:</label>
+        <input
+          type="text"
+          name="albumName"
+          onChange={(e) => {
+            setalbumName(e.target.value);
+          }}
+        />
+        <button onClick={deleteAlbum}> Delete Album</button>
         <br />
         <button onSubmit={revealOne}>
           Get All Albums and Songs For Artist

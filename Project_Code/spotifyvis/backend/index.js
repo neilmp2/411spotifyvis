@@ -54,6 +54,65 @@ app.get("/api/query2", (require, response) => {
   });
 });
 
+app.get("/api/trigger", (require, response) => {
+  const sqlSelect =
+    "DROP TRIGGER IF EXISTS AlbumDel; \
+    DELIMITER $$ \
+    CREATE TRIGGER AlbumDel \
+    BEFORE DELETE ON album \
+    FOR EACH ROW \
+        BEGIN \
+        IF old.album_id IN (SELECT album_id FROM song) \
+            THEN \
+            UPDATE song \
+            SET song.album_id = null \
+            WHERE song.album_id = old.album_id; \
+    END IF; \
+    END; \
+    $$ \
+    DELIMITER ;"
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
+app.get("/api/transaction", (require, response) => {
+  const albumName = require.body.albumName;
+  const sqlSelect =
+    "SET TRANSACTION ISOLATION LEVEL READ COMMITTED; \
+    # display all content that will be deleted/modified: \
+    SELECT song_name, album_name \
+    FROM Song NATURAL JOIN Album \
+    WHERE album_name = ? \
+    GROUP BY album_name, song_name \
+    ORDER BY album_name; \
+    # display metadata of songs in album: \
+    SELECT AVG(song_tempo), AVG(song_valence), AVG(song_dance) \
+    FROM Song NATURAL JOIN Album \
+    WHERE album_name = ? AND song_tempo IS NOT NULL AND song_valence IS NOT NULL AND song_dance IS NOT NULL \
+    GROUP BY album_name, song_name; \
+    # delete the album \
+    DELETE FROM album \
+    WHERE album_name IN (?); # causes trigger to clear the songs with the same id \
+    # show remaining albums and songs for the artist whose album was deleted \
+    SELECT song_name, album_name \
+    FROM Song NATURAL JOIN Album \
+    WHERE album_id IN (SELECT album_id \
+                       FROM Album NATURAL JOIN Artist \
+                       WHERE artist_id IN (SELECT artist_id \
+                                           FROM Album \
+                                           WHERE album_name = ?)) \
+    # get id of artist from album name \
+    GROUP BY album_name, song_name \
+    ORDER BY album_name; \
+    COMMIT;"
+  db.query(sqlSelect, 
+    [albumName, albumName, albumName, albumName],
+    (err, result) => {
+    response.send(result);
+  });
+});
+
 app.get("/", (require, response) => {
   response.send("Hello!");
 });
