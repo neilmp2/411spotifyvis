@@ -25,23 +25,11 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Playlists" />
     </ListItem>
-    <ListItem button>
+    <ListItem button component={Link} to="/Albums">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
       <ListItemText primary="Albums" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Advanced Query 1" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Advanced Query 2" />
     </ListItem>
   </div>
 );

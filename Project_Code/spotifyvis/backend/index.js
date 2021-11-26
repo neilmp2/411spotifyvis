@@ -44,6 +44,13 @@ app.get("/api/getPlaylists", (require, response) => {
   });
 });
 
+app.get("/api/getAlbums", (require, response) => {
+  const sqlSelect = "select * from Album;";
+  db.query(sqlSelect, (err, result) => {
+    response.send(result);
+  });
+});
+
 app.get("/api/getSongs", (require, response) => {
   const sqlSelect = "select * from song;";
   db.query(sqlSelect, (err, result) => {
@@ -75,10 +82,19 @@ app.get("/", (require, response) => {
 app.post("/api/insert", (require, response) => {
   const songName = require.body.songName;
   const sqlInsert =
-    "INSERT INTO `song` (`song_id`, `song_name`, `artist_id`, `album_id`, `song_tempo`, `song_valence`, `song_dance`) VALUES (?,?,?,?,?,?,?)";
+    "INSERT INTO `song` (`song_id`, `song_name`, `artist_id`,`artist_name` , `album_id`, `song_tempo`, `song_valence`, `song_dance`) VALUES (?,?,?,?,?,?,?,?)";
   db.query(
     sqlInsert,
-    [Math.floor(Math.random() * 100) + 10000, songName, 1, 2, 0, 0, 0],
+    [
+      Math.floor(Math.random() * 100) + 10000,
+      songName,
+      -1,
+      "no artist",
+      2,
+      0,
+      0,
+      0,
+    ],
     (err, result) => {
       console.log(err);
     }

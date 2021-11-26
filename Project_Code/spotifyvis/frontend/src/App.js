@@ -12,6 +12,7 @@ import {
 import NavigationBar from "./Components/NavigationBar";
 import Routeslist from "./Components/routeslist";
 import Playlists from "./Playlists";
+import Albums from "./Albums";
 
 function App() {
   const [movieName, setMovieName] = useState("");
@@ -68,6 +69,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="Playlists" element={<Playlists />} />
+          <Route path="Albums" element={<Albums />} />
         </Routes>
 
         {/* <h1> CRUD APPLICATIONS</h1>

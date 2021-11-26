@@ -12,7 +12,7 @@ export default function Deposits() {
     <React.Fragment>
       <Title>Welcome!</Title>
       <Typography component="p" variant="h5">
-        Cloud Wong-Patel
+        Cloud Patel
       </Typography>
 
       <div>
