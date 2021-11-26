@@ -29,7 +29,6 @@ export default function PlaylistDisplay() {
         <TableHead>
           <TableRow>
             <TableCell>Playlist Name</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

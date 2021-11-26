@@ -1,6 +1,7 @@
 import * as React from "react";
 import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
+import Button from "@mui/material/Button";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
@@ -10,6 +11,7 @@ import Axios from "axios";
 import { useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
+import { TextField } from "@mui/material";
 
 function preventDefault(event) {
   event.preventDefault();
@@ -17,7 +19,7 @@ function preventDefault(event) {
 
 export default function SongDisplay() {
   const [allSongs, setallSongs] = React.useState([]);
-  const [test, setTest] = React.useState("");
+  const [newDanceVal, setnewDanceVal] = React.useState("");
 
   useEffect(() => {
     Axios.get("http://localhost:3002/api/getSongs").then((response) => {
@@ -43,6 +45,13 @@ export default function SongDisplay() {
     );
   };
 
+  const updateDanceVal = (songName) => {
+    Axios.put(`http://localhost:3002/api/update`, {
+      songName: songName,
+      newDanceVal: newDanceVal,
+    });
+  };
+
   return (
     <React.Fragment>
       <Title>All Songs</Title>
@@ -60,6 +69,21 @@ export default function SongDisplay() {
               <TableCell>{row.song_name}</TableCell>
               <TableCell>{row.artist_name}</TableCell>
               <TableCell>{row.song_dance}</TableCell>
+              <TableCell>
+                <TextField
+                  type="number"
+                  onChange={(e) => {
+                    setnewDanceVal(e.target.value);
+                  }}
+                ></TextField>
+                <Button
+                  onClick={() => {
+                    updateDanceVal(row.song_name);
+                  }}
+                >
+                  Update
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

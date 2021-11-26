@@ -25,7 +25,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Playlists" />
     </ListItem>
-    <ListItem button>
+    <ListItem button component={Link} to="/Albums">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
