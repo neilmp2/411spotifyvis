@@ -7,8 +7,8 @@ const cors = require("cors");
 var db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "neil",
-  database: "spovisdemo1",
+  password: "My#123def",
+  database: "cs411_demo",
 });
 
 // db.connect(function(err) {
@@ -80,21 +80,17 @@ app.get("/api/transaction", (require, response) => {
   const albumName = require.body.albumName;
   const sqlSelect =
     "SET TRANSACTION ISOLATION LEVEL READ COMMITTED; \
-    # display all content that will be deleted/modified: \
     SELECT song_name, album_name \
     FROM Song NATURAL JOIN Album \
     WHERE album_name = ? \
     GROUP BY album_name, song_name \
     ORDER BY album_name; \
-    # display metadata of songs in album: \
     SELECT AVG(song_tempo), AVG(song_valence), AVG(song_dance) \
     FROM Song NATURAL JOIN Album \
     WHERE album_name = ? AND song_tempo IS NOT NULL AND song_valence IS NOT NULL AND song_dance IS NOT NULL \
     GROUP BY album_name, song_name; \
-    # delete the album \
     DELETE FROM album \
-    WHERE album_name IN (?); # causes trigger to clear the songs with the same id \
-    # show remaining albums and songs for the artist whose album was deleted \
+    WHERE album_name IN (?); \
     SELECT song_name, album_name \
     FROM Song NATURAL JOIN Album \
     WHERE album_id IN (SELECT album_id \
@@ -102,7 +98,6 @@ app.get("/api/transaction", (require, response) => {
                        WHERE artist_id IN (SELECT artist_id \
                                            FROM Album \
                                            WHERE album_name = ?)) \
-    # get id of artist from album name \
     GROUP BY album_name, song_name \
     ORDER BY album_name; \
     COMMIT;"
@@ -110,6 +105,16 @@ app.get("/api/transaction", (require, response) => {
     [albumName, albumName, albumName, albumName],
     (err, result) => {
     response.send(result);
+  });
+});
+
+app.delete("/api/delete/:albumName", (require, response) => {
+  const albumName = '';
+  console.log(albumName);
+  const sqlDelete =
+    "delete from album WHERE album_id = 2";
+  db.query(sqlDelete, albumName, (err, result) => {
+    if (err) console.log(err);
   });
 });
 

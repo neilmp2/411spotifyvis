@@ -48,9 +48,9 @@ function App() {
     });
   }, []);
 
-  const deleteAlbum = () => {
-    Axios.get(`http://localhost:3002/api/trigger`);
-    Axios.get(`http://localhost:3002/api/transaction`);
+  const deleteAlbum = (albumName) => {
+    Axios.delete(`http://localhost:3002/api/trigger`);
+    Axios.delete(`http://localhost:3002/api/delete/${albumName}`);
   };
 
   const revealOne = () => {
