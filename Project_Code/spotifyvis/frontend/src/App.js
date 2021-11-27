@@ -30,6 +30,7 @@ function App() {
   };
 
   const updateDanceVal = (songName) => {
+    console.debug("called");
     Axios.put(`http://localhost:3002/api/update`, {
       songName: songName,
       newDanceVal: newDanceVal,
@@ -49,8 +50,14 @@ function App() {
   }, []);
 
   const deleteAlbum = (albumName) => {
-    Axios.delete(`http://localhost:3002/api/trigger`);
-    Axios.delete(`http://localhost:3002/api/delete/${albumName}`);
+    console.log("calling");
+    //Axios.delete(`http://localhost:3002/api/trigger`);
+   Axios.delete(`http://localhost:3002/api/transaction/${albumName}`);
+    // Axios.put(`http://localhost:3002/api/update`, {
+    //   songName: 'cat',
+    //   newDanceVal: '1',
+    // });
+    console.log('done calling');
   };
 
   const revealOne = () => {
