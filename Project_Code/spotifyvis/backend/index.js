@@ -9,6 +9,7 @@ var db = mysql.createConnection({
   user: "root",
   password: "My#123def",
   database: "cs411_demo",
+  multipleStatements: true,
 });
 
 // db.connect(function(err) {
@@ -57,7 +58,15 @@ app.get("/api/query2", (require, response) => {
 app.delete("/api/trigger", (require, response) => {
   console.log('trigger');
   const sqlSelect =
-    "DROP TRIGGER IF EXISTS AlbumDel; DELIMITER $$ CREATE TRIGGER AlbumDel BEFORE DELETE ON album FOR EACH ROW BEGIN IF old.album_id IN (SELECT album_id FROM song) THEN  UPDATE song SET song.album_id = null WHERE song.album_id = old.album_id; END IF; END; $$ DELIMITER ;";
+    "DELIMITER $$ \
+     CREATE TRIGGER AlbumDel BEFORE DELETE ON album \
+     FOR EACH ROW BEGIN IF old.album_id \
+     IN (SELECT album_id FROM song) THEN  \
+     UPDATE song SET song.album_id = null \
+     WHERE song.album_id = old.album_id; \
+     END IF; \
+     END; \
+     $$ DELIMITER ;";
    db.query(sqlSelect, (err, result) => {
     console.log(err);
     response.send(result);

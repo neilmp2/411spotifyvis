@@ -51,8 +51,8 @@ function App() {
 
   const deleteAlbum = (albumName) => {
     console.log("calling");
-    //Axios.delete(`http://localhost:3002/api/trigger`);
-   Axios.delete(`http://localhost:3002/api/transaction/${albumName}`);
+    Axios.delete(`http://localhost:3002/api/transaction/${albumName}`);
+   // Axios.delete(`http://localhost:3002/api/trigger`);
     // Axios.put(`http://localhost:3002/api/update`, {
     //   songName: 'cat',
     //   newDanceVal: '1',
@@ -86,7 +86,7 @@ function App() {
             setalbumName(e.target.value);
           }}
         />
-        <button onClick={deleteAlbum}> Delete Album</button>
+        <button onClick={deleteAlbum(albumName)}> Delete Album</button>
         <br />
         <button onSubmit={revealOne}>
           Get All Albums and Songs For Artist
