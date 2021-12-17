@@ -7,7 +7,7 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Deposits() {
+export default function User() {
   return (
     <React.Fragment>
       <Title>Welcome!</Title>

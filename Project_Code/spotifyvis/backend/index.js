@@ -9,6 +9,7 @@ var db = mysql.createConnection({
   user: "root",
   password: "neil",
   database: "spovisdemo1",
+  multipleStatements: true,
 });
 
 app.use(cors());
@@ -17,14 +18,6 @@ app.use(express.json());
 
 app.get("/api/get", (require, response) => {
   const sqlSelect = "SELECT * FROM Song";
-  db.query(sqlSelect, (err, result) => {
-    response.send(result);
-  });
-});
-
-app.get("/api/query1", (require, response) => {
-  const sqlSelect =
-    "SELECT song_name, album_name FROM Song NATURAL JOIN Album WHERE album_id IN (SELECT album_id FROM Album NATURAL JOIN Artist WHERE artist_name LIKE '%Yu-Peng Chen') GROUP BY album_name, song_name;";
   db.query(sqlSelect, (err, result) => {
     response.send(result);
   });
@@ -58,20 +51,70 @@ app.get("/api/getSongs", (require, response) => {
   });
 });
 
+app.delete("/api/trigger", (require, response) => {
+  console.log("trigger");
+  const sqlSelect =
+    "DELIMITER $$ \
+     CREATE TRIGGER AlbumDel BEFORE DELETE ON album \
+     FOR EACH ROW BEGIN IF old.album_id \
+     IN (SELECT album_id FROM song) THEN  \
+     UPDATE song SET song.album_id = null \
+     WHERE song.album_id = old.album_id; \
+     END IF; \
+     END; \
+     $$ DELIMITER ;";
+  db.query(sqlSelect, (err, result) => {
+    console.log(err);
+    response.send(result);
+  });
+  console.log("trigger done");
+});
+
+app.delete("/api/transaction/:albumName", (require, response) => {
+  console.log("transaction");
+  const albumName = require.params.albumName;
+  console.log(albumName);
+  const sqlSelect =
+    "SET TRANSACTION ISOLATION LEVEL READ COMMITTED; \
+    SET FOREIGN_KEY_CHECKS=0; \
+    SELECT song_name, album_name \
+    FROM Song NATURAL JOIN Album \
+    WHERE album_name = ? \
+    GROUP BY album_name, song_name \
+    ORDER BY album_name; \
+    SELECT AVG(song_tempo), AVG(song_valence), AVG(song_dance) \
+    FROM Song NATURAL JOIN Album \
+    WHERE album_name = ? AND song_tempo IS NOT NULL AND song_valence IS NOT NULL AND song_dance IS NOT NULL \
+    GROUP BY album_name, song_name; \
+    DELETE FROM album \
+    WHERE album_name IN (?); \
+    SELECT song_name, album_name \
+    FROM Song NATURAL JOIN Album \
+    WHERE album_id IN (SELECT album_id \
+                       FROM Album NATURAL JOIN Artist \
+                       WHERE artist_id IN (SELECT artist_id \
+                                           FROM Album \
+                                           WHERE album_name = ?)) \
+    GROUP BY album_name, song_name \
+    ORDER BY album_name; \
+    COMMIT;";
+  db.query(
+    sqlSelect,
+    [albumName, albumName, albumName, albumName],
+    (err, result) => {
+      console.log(err);
+      response.send(result);
+    }
+  );
+  console.log("transaction done");
+});
+
 app.get("/api/getArtist/:artist_id", (require, response) => {
   const artist_id = require.params.artist_id;
   const sqlSelect = "select artist_name from artist where artist_id= ?;";
   db.query(sqlSelect, artist_id, (err, result) => {
     response.send(result);
     //console.log(result[0]["artist_name"]);
-  });
-});
-
-app.get("/api/query2", (require, response) => {
-  const sqlSelect =
-    "SELECT user_id, name FROM User WHERE (user_id = 1) GROUP BY name UNION SELECT user_id, playlist_name FROM Playlist WHERE (user_id = 1) ORDER BY user_id;";
-  db.query(sqlSelect, (err, result) => {
-    response.send(result);
   });
 });
 
