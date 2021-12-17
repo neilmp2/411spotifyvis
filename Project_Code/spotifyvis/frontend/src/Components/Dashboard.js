@@ -17,7 +17,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { mainListItems, secondaryListItems } from "./listItems";
-import Deposits from "./Deposits";
+import User from "./User";
 import SongDisplay from "./SongDisplay";
 
 const drawerWidth = 240;
@@ -156,7 +156,7 @@ function DashboardContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={4} lg={3}>
+              {/* <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
                     p: 2,
@@ -165,9 +165,9 @@ function DashboardContent() {
                     height: 140,
                   }}
                 >
-                  <Deposits />
+                  <User />
                 </Paper>
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                   <SongDisplay />
